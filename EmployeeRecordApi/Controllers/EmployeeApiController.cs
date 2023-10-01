@@ -28,7 +28,7 @@ namespace EmployeeRecordApi.Controllers
                 return NotFound();
           }
           var employee = await _context.Employees.Where(e => e.RecordDate != DateTime.Parse("2100-01-01")).ToListAsync();
-          Log.Information("Employee result => {@employeeModel}", employee);
+          Log.Information("Successfully Returned All Employees");
           return employee;
         }
 
@@ -49,7 +49,7 @@ namespace EmployeeRecordApi.Controllers
                 Log.Information("Employee Not Found");
                 return new NotFoundObjectResult("Employee Not Found");
             }
-            Log.Information("Employee result => {@employeeModel}", employeeModel);
+            Log.Information("Successfully GetEmployeeById");
             return employeeModel;
         }
 
@@ -70,7 +70,7 @@ namespace EmployeeRecordApi.Controllers
                 Log.Information("Employee Not Found");
                 return new NotFoundObjectResult("Employee Not Found");
             }
-            Log.Information("Employee result => {@employeeModel}", employees.ToList());
+            Log.Information("Successfully GetEmployeesByFirstName");
             return employees.ToList();
         }
 
@@ -92,7 +92,7 @@ namespace EmployeeRecordApi.Controllers
                 return new NotFoundObjectResult("Employee Not Found");
             }
 
-            Log.Information("Employee result => {@employeeModel}", employees.ToList());
+            Log.Information("Successfully GetEmployeesByLastName");
             return employees.ToList();
         }
 
@@ -116,7 +116,7 @@ namespace EmployeeRecordApi.Controllers
                 Log.Information("Employee Not Found");
                 return new NotFoundObjectResult("Employee Not Found");
             }
-            Log.Information("Employee result => {@employeeModel}", employees.ToList());
+            Log.Information("Successfully GetEmployeesByTempRange");
             return employees.ToList();
         }
 
@@ -140,7 +140,7 @@ namespace EmployeeRecordApi.Controllers
                 Log.Information("Employee Not Found");
                 return new NotFoundObjectResult("Employee Not Found");
             }
-            Log.Information("Employee result => {@employeeModel}", employees.ToList());
+            Log.Information("Successfully GetAllEmployeesByDateRange");
             return employees.ToList();
         }
 
@@ -163,16 +163,15 @@ namespace EmployeeRecordApi.Controllers
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException ex) { 
-
-                Log.Information("Please provide Employee Number in the body");
-
                 if (!EmployeeModelExists(employeeModel.EmployeeNumber))
                 {
+                    Log.Information("Employee not Found");
                     return NotFound("Employee not found.");
                 }
                 else
                 {
-                    return StatusCode(500, "Concurrency conflict occurred. Please try again.");
+                    Log.Information("Please check EmployeeDetails");
+                    return StatusCode(500, "Please try again.");
                 }
             }
 
@@ -184,10 +183,10 @@ namespace EmployeeRecordApi.Controllers
         [HttpPost("/AddEmployee")]
         public async Task<ActionResult<EmployeeModel>> PostEmployeeModel([FromBody] EmployeeModel employeeModel)
         {
-          if (_context.Employees == null)
-          {
-              return Problem("Entity set 'EntityDBContext.Employees'  is null.");
-          }
+            if (_context.Employees == null)
+            {
+                return Problem("Entity set 'EntityDBContext.Employees'  is null.");
+            }
             _context.Employees.Add(employeeModel);
             await _context.SaveChangesAsync();
 
@@ -202,7 +201,7 @@ namespace EmployeeRecordApi.Controllers
         {
             if (_context.Employees == null)
             {
-                Log.Information("Employee Not Found");
+                Log.Information("No Records Found");
                 return NotFound();
             }
 
@@ -221,7 +220,7 @@ namespace EmployeeRecordApi.Controllers
 
             await _context.SaveChangesAsync();
 
-            Log.Information("Successfully Deleted Employee with EmployeeId: ", + id);
+            Log.Information("Successfully Deleted Employee with EmployeeNumber: ", + id);
             return NoContent();
         }
 
