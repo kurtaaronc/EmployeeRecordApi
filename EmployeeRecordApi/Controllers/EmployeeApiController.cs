@@ -67,7 +67,7 @@ namespace EmployeeRecordApi.Controllers
                     return new NotFoundObjectResult("Employee Not Found");
                 }
 
-                Log.Information("Successfully GetEmployeeById");
+                Log.Information("Successfully GetEmployeeById with EmployeeId: " + id);
                 return employeeModel;
             }
             catch (Exception e)
@@ -80,7 +80,7 @@ namespace EmployeeRecordApi.Controllers
         [Authorize]
         // Get Employee by FirstName
         [HttpGet("/GetByFirstName/{firstName}")]
-        public async Task<ActionResult<IEnumerable<EmployeeModel>>> GetEmployeeModelByName(string name)
+        public async Task<ActionResult<IEnumerable<EmployeeModel>>> GetEmployeeModelByName(string firstName)
         {
             try
             {
@@ -91,7 +91,7 @@ namespace EmployeeRecordApi.Controllers
                 }
 
                 var employees = await _context.Employees
-                    .Where(e => e.FirstName == name && e.RecordDate != DateTime.Parse("2100-01-01"))
+                    .Where(e => e.FirstName == firstName && e.RecordDate != DateTime.Parse("2100-01-01"))
                     .ToListAsync();
 
                 if (employees == null || !employees.Any())
@@ -99,7 +99,7 @@ namespace EmployeeRecordApi.Controllers
                     Log.Information("Employee Not Found");
                     return new NotFoundObjectResult("Employee Not Found");
                 }
-                Log.Information("Successfully GetEmployeesByFirstName");
+                Log.Information("Successfully GetEmployeesByFirstName with FirstName: " + firstName);
                 return employees.ToList();
             }
             catch (Exception e)
@@ -112,7 +112,7 @@ namespace EmployeeRecordApi.Controllers
         [Authorize]
         // Get Employee by LastName
         [HttpGet("/GetByLastName/{lastName}")]
-        public async Task<ActionResult<IEnumerable<EmployeeModel>>> GetEmployeeModelByLastName(string name)
+        public async Task<ActionResult<IEnumerable<EmployeeModel>>> GetEmployeeModelByLastName(string lastName)
         {
             try
             {
@@ -123,7 +123,7 @@ namespace EmployeeRecordApi.Controllers
                 }
 
                 var employees = await _context.Employees
-                    .Where(e => e.LastName == name && e.RecordDate != DateTime.Parse("2100-01-01"))
+                    .Where(e => e.LastName == lastName && e.RecordDate != DateTime.Parse("2100-01-01"))
                     .ToListAsync();
 
                 if (employees == null || !employees.Any())
@@ -131,8 +131,7 @@ namespace EmployeeRecordApi.Controllers
                     Log.Information("Employee Not Found");
                     return new NotFoundObjectResult("Employee Not Found");
                 }
-
-                Log.Information("Successfully GetEmployeesByLastName");
+                Log.Information("Successfully GetEmployeesByLastName with Lastname: " + lastName);
                 return employees.ToList();
             }
             catch (Exception e)
@@ -165,7 +164,7 @@ namespace EmployeeRecordApi.Controllers
                     return new NotFoundObjectResult("Employee Not Found");
                 }
 
-                Log.Information("Successfully GetEmployeesByTempRange");
+                Log.Information("Successfully GetEmployeesByTempRange with minTemp: " + temperatureRange.minTemperature + " and maxTemp: " + temperatureRange.maxTemperature);
                 return employees.ToList();
             }
             catch (Exception e)
@@ -198,7 +197,7 @@ namespace EmployeeRecordApi.Controllers
                     return new NotFoundObjectResult("Employee Not Found");
                 }
 
-                Log.Information("Successfully GetAllEmployeesByDateRange");
+                Log.Information("Successfully GetAllEmployeesByDateRange with startDate: " + dateRange.startDate + " and endDate: " + dateRange.endDate);
                 return employees.ToList();
             }
             catch (Exception e)
@@ -225,14 +224,14 @@ namespace EmployeeRecordApi.Controllers
 
                 _context.Entry(existingEmployee).CurrentValues.SetValues(employeeModel);
                 await _context.SaveChangesAsync();
+                Log.Information("Successfully Update Employee with EmployeeId: " + employeeModel.EmployeeNumber);
+                return StatusCode(200, "Successfully Updated Employee with EmployeeId: " + +employeeModel.EmployeeNumber);
             }
             catch (Exception e)
             {
                 Log.Error($"An error occurred: {e.Message}");
                 return StatusCode(500, "Internal Server Error");
             }
-
-            return NoContent();
         }
 
         [Authorize]
@@ -289,7 +288,7 @@ namespace EmployeeRecordApi.Controllers
                 await _context.SaveChangesAsync();
 
                 Log.Information("Successfully Deleted Employee with EmployeeNumber: " + id);
-                return NoContent();
+                return StatusCode(200, "Successfully Deleted Employee with EmployeeNumber: " + id);
             }
             catch (Exception e)
             {
