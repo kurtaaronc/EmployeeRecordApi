@@ -24,14 +24,26 @@ namespace EmployeeRecordApi.Controllers
         [HttpGet("/GetAllEmployees")]
         public async Task<ActionResult<IEnumerable<EmployeeModel>>> GetEmployees()
         {
-          if (_context.Employees == null)
-          {
-                Log.Information("Please Create an Employee");
-                return NotFound();
-          }
-          var employee = await _context.Employees.Where(e => e.RecordDate != DateTime.Parse("2100-01-01")).ToListAsync();
-          Log.Information("Successfully Returned All Employees");
-          return employee;
+            try
+            {
+                if (_context.Employees == null)
+                {
+                    Log.Information("Please Create an Employee");
+                    return NotFound();
+                }
+
+                var employees = await _context.Employees
+                    .Where(e => e.RecordDate != DateTime.Parse("2100-01-01"))
+                    .ToListAsync();
+
+                Log.Information("Successfully Returned All Employees");
+                return employees;
+            }
+            catch (Exception e)
+            {
+                Log.Error($"An error occurred: {e.Message}");
+                return StatusCode(500, "Internal Server Error");
+            }
         }
 
         [Authorize]
@@ -39,20 +51,30 @@ namespace EmployeeRecordApi.Controllers
         [HttpGet("/GetById/{id}")]
         public async Task<ActionResult<EmployeeModel>> GetEmployeeModel(int id)
         {
-            if (_context.Employees == null)
+            try
             {
-                Log.Information("Please Create an Employee");
-                return new NotFoundObjectResult("Please Create an Employee");
-            }
-            var employeeModel = await _context.Employees.FirstOrDefaultAsync(e => e.EmployeeNumber == id && e.RecordDate != DateTime.Parse("2100-01-01"));
+                if (_context.Employees == null)
+                {
+                    Log.Information("Please Create an Employee");
+                    return new NotFoundObjectResult("Please Create an Employee");
+                }
 
-            if (employeeModel == null)
-            {
-                Log.Information("Employee Not Found");
-                return new NotFoundObjectResult("Employee Not Found");
+                var employeeModel = await _context.Employees.FirstOrDefaultAsync(e => e.EmployeeNumber == id && e.RecordDate != DateTime.Parse("2100-01-01"));
+
+                if (employeeModel == null)
+                {
+                    Log.Information("Employee Not Found");
+                    return new NotFoundObjectResult("Employee Not Found");
+                }
+
+                Log.Information("Successfully GetEmployeeById");
+                return employeeModel;
             }
-            Log.Information("Successfully GetEmployeeById");
-            return employeeModel;
+            catch (Exception e)
+            {
+                Log.Error($"An error occurred: {e.Message}");
+                return StatusCode(500, "Internal Server Error");
+            }
         }
 
         [Authorize]
@@ -60,20 +82,31 @@ namespace EmployeeRecordApi.Controllers
         [HttpGet("/GetByFirstName/{firstName}")]
         public async Task<ActionResult<IEnumerable<EmployeeModel>>> GetEmployeeModelByName(string name)
         {
-            if (_context.Employees == null)
+            try
             {
-                Log.Information("Employee Not Found");
-                return new NotFoundObjectResult("Employee Not Found");
-            }
-            var employees = await _context.Employees.Where(e => e.FirstName == name && e.RecordDate != DateTime.Parse("2100-01-01")).ToListAsync();
+                if (_context.Employees == null)
+                {
+                    Log.Information("Employee Not Found");
+                    return new NotFoundObjectResult("Employee Not Found");
+                }
 
-            if (employees == null)
-            {
-                Log.Information("Employee Not Found");
-                return new NotFoundObjectResult("Employee Not Found");
+                var employees = await _context.Employees
+                    .Where(e => e.FirstName == name && e.RecordDate != DateTime.Parse("2100-01-01"))
+                    .ToListAsync();
+
+                if (employees == null || !employees.Any())
+                {
+                    Log.Information("Employee Not Found");
+                    return new NotFoundObjectResult("Employee Not Found");
+                }
+                Log.Information("Successfully GetEmployeesByFirstName");
+                return employees.ToList();
             }
-            Log.Information("Successfully GetEmployeesByFirstName");
-            return employees.ToList();
+            catch (Exception e)
+            {
+                Log.Error($"An error occurred: {e.Message}");
+                return StatusCode(500, "Internal Server Error");
+            }
         }
 
         [Authorize]
@@ -81,21 +114,32 @@ namespace EmployeeRecordApi.Controllers
         [HttpGet("/GetByLastName/{lastName}")]
         public async Task<ActionResult<IEnumerable<EmployeeModel>>> GetEmployeeModelByLastName(string name)
         {
-            if (_context.Employees == null)
+            try
             {
-                Log.Information("Employee Not Found");
-                return new NotFoundObjectResult("Employee Not Found");
-            }
-            var employees = await _context.Employees.Where(e => e.LastName == name && e.RecordDate != DateTime.Parse("2100-01-01")).ToListAsync();
+                if (_context.Employees == null)
+                {
+                    Log.Information("Employee Not Found");
+                    return new NotFoundObjectResult("Employee Not Found");
+                }
 
-            if (employees == null)
+                var employees = await _context.Employees
+                    .Where(e => e.LastName == name && e.RecordDate != DateTime.Parse("2100-01-01"))
+                    .ToListAsync();
+
+                if (employees == null || !employees.Any())
+                {
+                    Log.Information("Employee Not Found");
+                    return new NotFoundObjectResult("Employee Not Found");
+                }
+
+                Log.Information("Successfully GetEmployeesByLastName");
+                return employees.ToList();
+            }
+            catch (Exception e)
             {
-                Log.Information("Employee Not Found");
-                return new NotFoundObjectResult("Employee Not Found");
+                Log.Error($"An error occurred: {e.Message}");
+                return StatusCode(500, "Internal Server Error");
             }
-
-            Log.Information("Successfully GetEmployeesByLastName");
-            return employees.ToList();
         }
 
         [Authorize]
@@ -103,23 +147,32 @@ namespace EmployeeRecordApi.Controllers
         [HttpPost("/GetByTemperatureRange")]
         public async Task<ActionResult<IEnumerable<EmployeeModel>>> GetEmployeeModelByTemperatureRange([FromBody] TemperatureRangeModel temperatureRange)
         {
-            if (_context.Employees == null)
+            try
             {
-                Log.Information("Employee Not Found");
-                return new NotFoundObjectResult("Employee Not Found");
+                if (_context.Employees == null)
+                {
+                    Log.Information("Employee Not Found");
+                    return new NotFoundObjectResult("Employee Not Found");
+                }
+
+                var employees = await _context.Employees
+                    .Where(e => e.Temperature >= temperatureRange.minTemperature && e.Temperature <= temperatureRange.maxTemperature && e.RecordDate != DateTime.Parse("2100-01-01"))
+                    .ToListAsync();
+
+                if (employees == null || !employees.Any())
+                {
+                    Log.Information("Employee Not Found");
+                    return new NotFoundObjectResult("Employee Not Found");
+                }
+
+                Log.Information("Successfully GetEmployeesByTempRange");
+                return employees.ToList();
             }
-
-            var employees = await _context.Employees
-                .Where(e => e.Temperature >= temperatureRange.minTemperature && e.Temperature <= temperatureRange.maxTemperature && e.RecordDate != DateTime.Parse("2100-01-01"))
-                .ToListAsync();
-
-            if (employees == null || !employees.Any())
+            catch (Exception e)
             {
-                Log.Information("Employee Not Found");
-                return new NotFoundObjectResult("Employee Not Found");
+                Log.Error($"An error occurred: {e.Message}");
+                return StatusCode(500, "Internal Server Error");
             }
-            Log.Information("Successfully GetEmployeesByTempRange");
-            return employees.ToList();
         }
 
         [Authorize]
@@ -127,23 +180,32 @@ namespace EmployeeRecordApi.Controllers
         [HttpPost("/GetByDateRange")]
         public async Task<ActionResult<IEnumerable<EmployeeModel>>> GetEmployeeModelByDateRange([FromBody] DateRangeModel dateRange)
         {
-            if (_context.Employees == null)
+            try
             {
-                Log.Information("Employee Not Found");
-                return new NotFoundObjectResult("Employee Not Found");
+                if (_context.Employees == null)
+                {
+                    Log.Information("Employee Not Found");
+                    return new NotFoundObjectResult("Employee Not Found");
+                }
+
+                var employees = await _context.Employees
+                    .Where(e => e.RecordDate >= dateRange.startDate && e.RecordDate <= dateRange.endDate && e.RecordDate != DateTime.Parse("2100-01-01"))
+                    .ToListAsync();
+
+                if (employees == null || !employees.Any())
+                {
+                    Log.Information("Employee Not Found");
+                    return new NotFoundObjectResult("Employee Not Found");
+                }
+
+                Log.Information("Successfully GetAllEmployeesByDateRange");
+                return employees.ToList();
             }
-
-            var employees = await _context.Employees
-                .Where(e => e.RecordDate >= dateRange.startDate && e.RecordDate <= dateRange.endDate && e.RecordDate !=  DateTime.Parse("2100-01-01"))
-                .ToListAsync();
-
-            if (employees == null || !employees.Any())
+            catch (Exception e)
             {
-                Log.Information("Employee Not Found");
-                return new NotFoundObjectResult("Employee Not Found");
+                Log.Error($"An error occurred: {e.Message}");
+                return StatusCode(500, "Internal Server Error");
             }
-            Log.Information("Successfully GetAllEmployeesByDateRange");
-            return employees.ToList();
         }
 
         [Authorize]
@@ -164,17 +226,10 @@ namespace EmployeeRecordApi.Controllers
                 _context.Entry(existingEmployee).CurrentValues.SetValues(employeeModel);
                 await _context.SaveChangesAsync();
             }
-            catch (DbUpdateConcurrencyException ex) { 
-                if (!EmployeeModelExists(employeeModel.EmployeeNumber))
-                {
-                    Log.Information("Employee not Found");
-                    return NotFound("Employee not found.");
-                }
-                else
-                {
-                    Log.Information("Please check EmployeeDetails");
-                    return StatusCode(500, "Please try again.");
-                }
+            catch (Exception e)
+            {
+                Log.Error($"An error occurred: {e.Message}");
+                return StatusCode(500, "Internal Server Error");
             }
 
             return NoContent();
@@ -185,15 +240,24 @@ namespace EmployeeRecordApi.Controllers
         [HttpPost("/AddEmployee")]
         public async Task<ActionResult<EmployeeModel>> PostEmployeeModel([FromBody] EmployeeModel employeeModel)
         {
-            if (_context.Employees == null)
+            try
             {
-                return Problem("Entity set 'EntityDBContext.Employees'  is null.");
-            }
-            _context.Employees.Add(employeeModel);
-            await _context.SaveChangesAsync();
+                if (_context.Employees == null)
+                {
+                    return Problem("Entity set 'EntityDBContext.Employees'  is null.");
+                }
 
-            Log.Information("Successfully Created New Employee");
-            return CreatedAtAction("GetEmployeeModel", new { id = employeeModel.EmployeeNumber }, employeeModel);
+                _context.Employees.Add(employeeModel);
+                await _context.SaveChangesAsync();
+
+                Log.Information("Successfully Created New Employee");
+                return CreatedAtAction("GetEmployeeModel", new { id = employeeModel.EmployeeNumber }, employeeModel);
+            }
+            catch (Exception e)
+            {
+                Log.Error($"An error occurred: {e.Message}");
+                return StatusCode(500, "Internal Server Error");
+            }
         }
 
         [Authorize]
@@ -201,30 +265,39 @@ namespace EmployeeRecordApi.Controllers
         [HttpDelete("/DeleteEmployee/{id}")]
         public async Task<IActionResult> DeleteEmployeeModel(int id)
         {
-            if (_context.Employees == null)
+            try
             {
-                Log.Information("No Records Found");
-                return NotFound();
-            }
+                if (_context.Employees == null)
+                {
+                    Log.Information("No Records Found");
+                    return NotFound();
+                }
 
-            var employeeModel = await _context.Employees.FindAsync(id);
-            if (employeeModel == null)
+                var employeeModel = await _context.Employees.FindAsync(id);
+                if (employeeModel == null)
+                {
+                    Log.Information("Employee Not Found");
+                    return NotFound();
+                }
+
+                // Soft delete by setting the deletion date to 2100-01-01
+                employeeModel.RecordDate = DateTime.Parse("2100-01-01");
+
+                // Mark the entity as modified, so Entity Framework will update the DeletionDate property
+                _context.Entry(employeeModel).State = EntityState.Modified;
+
+                await _context.SaveChangesAsync();
+
+                Log.Information("Successfully Deleted Employee with EmployeeNumber: " + id);
+                return NoContent();
+            }
+            catch (Exception e)
             {
-                Log.Information("Employee Not Found");
-                return NotFound();
+                Log.Error($"An error occurred: {e.Message}");
+                return StatusCode(500, "Internal Server Error");
             }
-
-            // Soft delete by setting the deletion date to 2100-01-01
-            employeeModel.RecordDate = DateTime.Parse("2100-01-01");
-
-            // Mark the entity as modified, so Entity Framework will update the DeletionDate property
-            _context.Entry(employeeModel).State = EntityState.Modified;
-
-            await _context.SaveChangesAsync();
-
-            Log.Information("Successfully Deleted Employee with EmployeeNumber: ", + id);
-            return NoContent();
         }
+
 
         private bool EmployeeModelExists(int id)
         {
