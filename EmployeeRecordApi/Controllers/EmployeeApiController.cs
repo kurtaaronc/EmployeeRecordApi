@@ -41,7 +41,7 @@ namespace EmployeeRecordApi.Controllers
             }
             catch (Exception e)
             {
-                Log.Error($"An error occurred: {e.Message}");
+                Log.Information($"An error occurred: {e.Message}");
                 return StatusCode(500, "Internal Server Error");
             }
         }
@@ -72,7 +72,7 @@ namespace EmployeeRecordApi.Controllers
             }
             catch (Exception e)
             {
-                Log.Error($"An error occurred: {e.Message}");
+                Log.Information($"An error occurred: {e.Message}");
                 return StatusCode(500, "Internal Server Error");
             }
         }
@@ -104,7 +104,7 @@ namespace EmployeeRecordApi.Controllers
             }
             catch (Exception e)
             {
-                Log.Error($"An error occurred: {e.Message}");
+                Log.Information($"An error occurred: {e.Message}");
                 return StatusCode(500, "Internal Server Error");
             }
         }
@@ -136,7 +136,7 @@ namespace EmployeeRecordApi.Controllers
             }
             catch (Exception e)
             {
-                Log.Error($"An error occurred: {e.Message}");
+                Log.Information($"An error occurred: {e.Message}");
                 return StatusCode(500, "Internal Server Error");
             }
         }
@@ -169,7 +169,7 @@ namespace EmployeeRecordApi.Controllers
             }
             catch (Exception e)
             {
-                Log.Error($"An error occurred: {e.Message}");
+                Log.Information($"An error occurred: {e.Message}");
                 return StatusCode(500, "Internal Server Error");
             }
         }
@@ -202,7 +202,7 @@ namespace EmployeeRecordApi.Controllers
             }
             catch (Exception e)
             {
-                Log.Error($"An error occurred: {e.Message}");
+                Log.Information($"An error occurred: {e.Message}");
                 return StatusCode(500, "Internal Server Error");
             }
         }
@@ -229,7 +229,7 @@ namespace EmployeeRecordApi.Controllers
             }
             catch (Exception e)
             {
-                Log.Error($"An error occurred: {e.Message}");
+                Log.Information($"An error occurred: {e.Message}");
                 return StatusCode(500, "Internal Server Error");
             }
         }
@@ -254,7 +254,7 @@ namespace EmployeeRecordApi.Controllers
             }
             catch (Exception e)
             {
-                Log.Error($"An error occurred: {e.Message}");
+                Log.Information($"An error occurred: {e.Message}");
                 return StatusCode(500, "An error occurred: An error occurred while saving the entity changes. See the inner exception for details.");
             }
         }
@@ -292,7 +292,7 @@ namespace EmployeeRecordApi.Controllers
             }
             catch (Exception e)
             {
-                Log.Error($"An error occurred: {e.Message}");
+                Log.Information($"An error occurred: {e.Message}");
                 return StatusCode(500, "Internal Server Error");
             }
         }
