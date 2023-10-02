@@ -4,6 +4,8 @@ using EmployeeRecordApi.Models;
 using Microsoft.AspNetCore.Authorization;
 using Serilog;
 
+
+//Please Generate a Bearer Token before accessing the APIS Authorizer.cs is the Token Generator
 namespace EmployeeRecordApi.Controllers
 {
     [Route("api/[controller]")]
